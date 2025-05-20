@@ -5,26 +5,27 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const scene = new THREE.Scene();
 scene.background = null;
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 1, 8);
+const camera = new THREE.PerspectiveCamera(75, 1, 0.2, 1000);
+camera.position.set(0, 1, 1.6);
 
 const renderer = new THREE.WebGLRenderer({ alpha: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+renderer.setSize(200, 200);
+document.querySelector('.color-picker').appendChild(renderer.domElement);
 
-// Controls
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // для мягких теней
+
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-// ✅ Свет добавляется в сцену (НЕ в модель)
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(5, 10, 7.5);
+
 scene.add(directionalLight);
 
 const ambientLight = new THREE.AmbientLight(0x404040);
 scene.add(ambientLight);
 
-// Загрузка модели
 const loader = new GLTFLoader();
 let model;
 
@@ -78,21 +79,22 @@ loader.load('globe.glb', function (gltf) {
 	console.error(error);
 });
 
+const colorHexElem = document.querySelector('.color-hex');
+
 // Анимация
 function animate() {
 	controls.update();
 	renderer.render(scene, camera);
 	
-	getCenterPixelColor(); // ← обновляем фон сайта
+	getCenterPixelColor();
 }
 renderer.setAnimationLoop(animate);
 
 
 function getCenterPixelColor() {
 	const gl = renderer.getContext();
-	const pixelBuffer = new Uint8Array(4); // RGBA
-	
-	// Считать пиксель в центре окна
+	const pixelBuffer = new Uint8Array(4);
+
 	const x = Math.floor(renderer.domElement.width / 2);
 	const y = Math.floor(renderer.domElement.height / 2);
 	
@@ -102,6 +104,17 @@ function getCenterPixelColor() {
 	const g = pixelBuffer[1];
 	const b = pixelBuffer[2];
 	
-	// Установить цвет фона страницы
-	document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+	const rgb = `rgb(${r}, ${g}, ${b})`;
+	const hex = rgbToHex(r, g, b);
+	
+	// document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+	colorHexElem.value = hex;
+}
+
+function rgbToHex(r, g, b) {
+	return "#" + [r, g, b].map(x => {
+		const hex = x.toString(16);
+		return hex.length === 1 ? "0" + hex : hex;
+	}).join('');
 }
