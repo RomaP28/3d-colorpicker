@@ -42,7 +42,6 @@ const rainbowMaterial = new THREE.ShaderMaterial({
     varying vec3 vPosition;
     varying vec2 vUv;
 
-    // Функция для преобразования HSL → RGB
     vec3 hsl2rgb(float h, float s, float l) {
       float c = (1.0 - abs(2.0 * l - 1.0)) * s;
       float x = c * (1.0 - abs(mod(h * 6.0, 2.0) - 1.0));
