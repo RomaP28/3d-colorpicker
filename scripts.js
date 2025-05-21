@@ -107,7 +107,10 @@ function getCenterPixelColor() {
 	const rgb = `rgb(${r}, ${g}, ${b})`;
 	const hex = rgbToHex(r, g, b);
 	
+	
 	// document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+	
+	// document.body.style.backgroundImage = `linear-gradient(rgba(${r}, ${g}, ${b}, 0.5), rgba(${r}, ${g}, ${b}, 0.5)), url('213.jpg')`;
 
 	colorHexElem.value = hex;
 }
